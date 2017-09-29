@@ -37,5 +37,11 @@ Updates are pending on how to install and run the program.
 
 ## Installation
 
+First, you need to install Pintos on your computer. This is done using a VM (if you are a MacOS user then VirtualBox is a good VM to use.) Do not load this directly onto your computer as you are changing the kernel and if you mess up, it can cause a lot of problems to your computer. 
+
+Turn on your VM. I used Ubuntu 16.04 to run this VM and Pintos. The following link is a guide you can use to install Pintos onto your machine: https://tssurya.wordpress.com/2014/08/16/installing-pintos-on-your-machine/
+
+NOTE: If you are using the downloaded Pintos from the site the paths from the sites are different. The path with the new Pintos is longer such as: "$HOME/os-pintos/home/ugrads/dabest/cis520/pintos/src/utils. If you do not have this path or something similar to this (according to your path on the terminal) in your edited file, you will not be able to load Pintos onto your computer. 
+
 
 ## Run
