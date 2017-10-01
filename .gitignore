@@ -1,0 +1,14 @@
+cscope.files
+cscope.out
+TAGS
+tags
+
+#CLion files
+.idea
+cmake-build-debug
+
+#User Specific Files
+utils/pintos-gdb
+utils/pintos
+utils/Pintos.pm
+
