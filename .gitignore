@@ -3,9 +3,6 @@ cscope.out
 TAGS
 tags
 
-#ignore filesys
-*.dsk
-
 #CLion files
 .idea
 cmake-build-debug
