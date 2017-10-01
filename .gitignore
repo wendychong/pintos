@@ -8,7 +8,7 @@ tags
 cmake-build-debug
 
 #User Specific Files
-pintos/src/utils/pintos-gdb
-pintos/src/utils/pintos
-pintos/src/utils/Pintos.pm
+src/utils/pintos-gdb
+src/utils/pintos
+src/utils/Pintos.pm
 
