@@ -253,8 +253,8 @@ sub set_disk {
 
 # Locates the files used to back each of the virtual disks,
 # and creates temporary disks.
-my $my_home = $ENV{'HOME'};
 sub find_disks {
+	my $my_home = $ENV{'HOME'};
     # Find kernel, if we don't already have one.
     if (!exists $parts{KERNEL}) {
 	my $name = find_file ('$my_home/os-pintos/pintos/src/userprog/build/kernel.bin');
