@@ -8,8 +8,4 @@ tags
 cmake-build-debug
 CMakeLists.txt
 
-#User Specific Files
-src/utils/pintos-gdb
-src/utils/pintos
-src/utils/Pintos.pm
 
