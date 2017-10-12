@@ -161,7 +161,6 @@ start_process (void *args_)
 int
 process_wait (tid_t child_tid UNUSED)
 {
-  while(1); // Current implementation returns immediately
   return -1;
 }
 
