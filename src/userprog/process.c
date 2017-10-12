@@ -20,6 +20,62 @@
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
+static void push_args(char *argv[], void **esp, int argc);
+
+/**
+ * @brief Pushes arguments to the stack according to Section 3.5 and 3.51 in
+ * Project 2.
+ * @param argv The command line arguments
+ * @param esp The stack pointer
+ * @param argc The number of arguments
+ */
+static void push_args(char *argv[], void **esp, int argc) {
+  void *argv_addresses[argc]; // Array for holding addresses of args on stack
+  int arg_length;
+
+  printf("esp: %p\n", *esp);
+  // Add argument addresses to array
+  // Copy arguments to stack
+  for (int i=argc-1; i>=0; i--) {
+    arg_length = strlen(argv[i])+1;
+    *esp -= arg_length;
+    printf("esp: %p, argv[%d]: %s\n", *esp, i, argv[i]);
+    memcpy(*esp, argv[i], arg_length);
+    printf("%s\n", (char*) *esp);
+    argv_addresses[i] = *esp;
+  }
+  // Word Align
+  *esp -= ((unsigned int) *esp)%4;
+  printf("esp: %p\n", *esp);
+
+  // Final '0' on stack
+  *esp -= 4;
+  printf("esp: %p\n", *esp);
+  *((uint32_t*) *esp) = 0;
+
+  // Push addresses to stack in reverse order
+  for (int i=argc-1; i>=0; i--) {
+    *esp -=4;
+    printf("esp: %p\n", *esp);
+    *((void **) *esp) = argv_addresses[i];
+    printf("address: %p\n", argv_addresses[i]);
+  }
+
+  // Push base address of argv to stack
+  *esp -= 4;
+  printf("esp: %p\n", *esp);
+  *((void **) *esp) = *esp+4;
+
+  // Push argc to stack
+  *esp -= 4;
+  printf("esp: %p\n", *esp);
+  *((int *) *esp) = argc;
+
+  // Push return address to stack
+  *esp -= 4;
+  printf("esp: %p\n", *esp);
+  *((int *) *esp) = 0;
+}
 
 /* Starts a new thread running a user program loaded from
    FILENAME.  The new thread may be scheduled (and may even exit)
@@ -52,17 +108,21 @@ process_execute (const char *file_name)
 /* A thread function that loads a user process and starts it
    running. */
 static void
-start_process (void *file_name_)
+start_process (void *args_)
 {
-  char *file_name = file_name_;
+  char *args = args_;
   struct intr_frame if_;
   bool success;
-
-  char *token, *save_ptr;
-  char *esp;
-  char *argv[512]; // Assume less than 512 arguments
+  struct thread *cur = thread_current();
+  char *save_ptr, *arg;
+  char *argv[100];
   int argc = 0;
 
+  for (arg = strtok_r(args, " ", &save_ptr); arg!=NULL; arg = strtok_r
+      (NULL, " ", &save_ptr)) {
+    argv[argc] = arg;
+    argc++;
+  }
 
   /* Initialize interrupt frame and load executable. */
   memset (&if_, 0, sizeof if_);
@@ -70,18 +130,14 @@ start_process (void *file_name_)
   if_.cs = SEL_UCSEG;
   if_.eflags = FLAG_IF | FLAG_MBS;
 
-  token = strtok_r(file_name, " ", &save_ptr);
-  success = load(token, &if_.eip, &if_.esp);
+  success = load(cur->name, &if_.eip, &if_.esp);
 
-  esp = (char *)if_.esp;
-
-  for (; token != NULL; token = strtok_r(NULL, " ", &save_ptr)) {
-
+  if (success) {
+    push_args(argv, &if_.esp, argc);
   }
-  /* If load failed, quit. */
-  palloc_free_page (file_name);
-  if (!success)
+  else {
     thread_exit ();
+  }
 
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
@@ -454,8 +510,9 @@ setup_stack (void **esp)
   if (kpage != NULL)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
-      if (success)
-        *esp = PHYS_BASE-12;
+      if (success) {
+        *esp = PHYS_BASE;
+      }
       else
         palloc_free_page (kpage);
     }
