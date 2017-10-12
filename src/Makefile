@@ -27,3 +27,9 @@ cscope.files::
 
 cscope:: cscope.files
 	cscope -b -q -k
+
+SUBDIRS := threads userprog vm filesys examples utils
+build-all: $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) -C $@
+.PHONY: build-all $(SUBDIRS)
