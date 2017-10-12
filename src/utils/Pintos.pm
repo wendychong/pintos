@@ -357,10 +357,10 @@ sub cyl_sectors {
 # Reads and returns the first $LOADER_SIZE bytes in $file_name.
 # If $file_name is undefined, tries to find the default loader.
 # Makes sure that the loader is a reasonable size.
-my $my_bash_home = $ENV{'HOME'};
+my $bash_home = $ENV{'HOME'};
 sub read_loader {
     my ($name) = @_;
-    $name = find_file ("$my_bash_home/os-pintos/pintos/src/userprog/build/loader.bin") if !defined $name;
+    $name = find_file ("$bash_home/os-pintos/pintos/src/userprog/build/loader.bin") if !defined $name;
     die "Cannot find loader\n" if !defined $name;
 
     my ($handle);
