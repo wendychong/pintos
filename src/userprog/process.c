@@ -33,47 +33,47 @@ static void push_args(char *argv[], void **esp, int argc) {
   void *argv_addresses[argc]; // Array for holding addresses of args on stack
   int arg_length;
 
-  printf("esp: %p\n", *esp);
+//  printf("esp: %p\n", *esp);
   // Add argument addresses to array
   // Copy arguments to stack
   for (int i=argc-1; i>=0; i--) {
     arg_length = strlen(argv[i])+1;
     *esp -= arg_length;
-    printf("esp: %p, argv[%d]: %s\n", *esp, i, argv[i]);
+   // printf("esp: %p, argv[%d]: %s\n", *esp, i, argv[i]);
     memcpy(*esp, argv[i], arg_length);
-    printf("%s\n", (char*) *esp);
+    //printf("%s\n", (char*) *esp);
     argv_addresses[i] = *esp;
   }
   // Word Align
   *esp -= ((unsigned int) *esp)%4;
-  printf("esp: %p\n", *esp);
+  //printf("esp: %p\n", *esp);
 
   // Final '0' on stack
   *esp -= 4;
-  printf("esp: %p\n", *esp);
+ // printf("esp: %p\n", *esp);
   *((uint32_t*) *esp) = 0;
 
   // Push addresses to stack in reverse order
   for (int i=argc-1; i>=0; i--) {
     *esp -=4;
-    printf("esp: %p\n", *esp);
+//    printf("esp: %p\n", *esp);
     *((void **) *esp) = argv_addresses[i];
-    printf("address: %p\n", argv_addresses[i]);
+   // printf("address: %p\n", argv_addresses[i]);
   }
 
   // Push base address of argv to stack
   *esp -= 4;
-  printf("esp: %p\n", *esp);
+//  printf("esp: %p\n", *esp);
   *((void **) *esp) = *esp+4;
 
   // Push argc to stack
   *esp -= 4;
-  printf("esp: %p\n", *esp);
+ // printf("esp: %p\n", *esp);
   *((int *) *esp) = argc;
 
   // Push return address to stack
   *esp -= 4;
-  printf("esp: %p\n", *esp);
+  //printf("esp: %p\n", *esp);
   *((int *) *esp) = 0;
 }
 
